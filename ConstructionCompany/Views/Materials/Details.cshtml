@@ -1,0 +1,51 @@
+﻿@model ConstructionCompany.Models.Material
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Material</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NameMaterial)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NameMaterial)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Packaging)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Packaging)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DescriptionMaterial)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DescriptionMaterial)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PriceMaterial)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PriceMaterial)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MaterialID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

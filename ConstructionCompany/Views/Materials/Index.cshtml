@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ConstructionCompany.Models.Material>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NameMaterial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Packaging)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DescriptionMaterial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PriceMaterial)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.NameMaterial)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Packaging)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DescriptionMaterial)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PriceMaterial)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MaterialID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.MaterialID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MaterialID })
+        </td>
+    </tr>
+}
+
+</table>

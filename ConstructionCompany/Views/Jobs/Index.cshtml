@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ConstructionCompany.Models.Job>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Material.NameMaterial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NameJob)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DescriptionJob)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PriceJob)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Material.NameMaterial)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NameJob)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DescriptionJob)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PriceJob)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.JobID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.JobID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.JobID })
+        </td>
+    </tr>
+}
+
+</table>

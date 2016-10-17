@@ -1,0 +1,57 @@
+﻿@model ConstructionCompany.Models.Job
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Job</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Material.NameMaterial)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Material.NameMaterial)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NameJob)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NameJob)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DescriptionJpb)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DescriptionJpb)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PriceJob)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PriceJob)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

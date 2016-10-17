@@ -1,0 +1,43 @@
+﻿@model ConstructionCompany.Models.Brigade
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Brigade</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NameBrigade)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NameBrigade)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Brigadier)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Brigadier)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Composition)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Composition)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.BrigadeID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
