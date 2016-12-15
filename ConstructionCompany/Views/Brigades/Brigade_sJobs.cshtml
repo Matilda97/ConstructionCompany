@@ -1,0 +1,43 @@
+﻿@model PagedList.IPagedList<ConstructionCompany.Models.Order>
+
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Brigade's jobs</h2>
+
+@Html.ActionLink("Brigade's jobs", "Brigade_sJobs")
+
+@using (Html.BeginForm("Brigade_sJobs", "Brigades", FormMethod.Get))
+{
+    <fieldset>
+        Job: @Html.TextBox("JobFind", ViewBag.CurrentFilter as string)
+        <input type="submit" value="to find" />
+    </fieldset> 
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Brigade.NameBrigade)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Job.NameJob)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Brigade.NameBrigade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job.NameJob)
+            </td>
+        </tr>
+    }
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = ViewBag.CurrentFilter }))
+</table>

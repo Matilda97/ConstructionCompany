@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ConstructionCompany.Models;
+using PagedList;
+using PagedList.Mvc;
 
 namespace ConstructionCompany.Controllers
 {
@@ -15,12 +17,32 @@ namespace ConstructionCompany.Controllers
         private ConstructionCompanyContext db = new ConstructionCompanyContext();
 
         // GET: Brigades
-        public ActionResult Index()
+        [Authorize]
+        public ActionResult Index(int? page, string filter1 = "", string BrigadeFind = "", string filter2 = "", string BrigadierFind = "")
         {
-            return View(db.Brigades.ToList());
+            if (BrigadeFind == "" && BrigadierFind == "")
+            {
+                BrigadeFind = filter1;
+                BrigadierFind = filter2;
+            }
+            else
+            {
+                page = 1;
+            }
+            ViewBag.CurrentFilter1 = BrigadeFind;
+            ViewBag.CurrentFilter2 = BrigadierFind;
+
+            var brigades = from n in db.Brigades
+                           select n;
+            if (BrigadeFind != "")
+                brigades = brigades.Where(n => n.NameBrigade.StartsWith(BrigadeFind));
+            if (BrigadierFind != "")
+                brigades = brigades.Where(n => n.Brigadier.StartsWith(BrigadierFind));
+            return View(brigades.ToList().ToPagedList(page ?? 1, 20));
         }
 
         // GET: Brigades/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -36,14 +58,14 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Brigades/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: Brigades/Create
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "BrigadeID,NameBrigade,Brigadier,Composition")] Brigade brigade)
@@ -59,6 +81,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Brigades/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -74,8 +97,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // POST: Brigades/Edit/5
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "BrigadeID,NameBrigade,Brigadier,Composition")] Brigade brigade)
@@ -90,6 +112,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Brigades/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -105,6 +128,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // POST: Brigades/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -113,6 +137,26 @@ namespace ConstructionCompany.Controllers
             db.Brigades.Remove(brigade);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public ActionResult Brigade_sJobs(int? page, string filter = "", string JobFind = "")
+        {
+            if (JobFind == "")
+            {
+                JobFind = filter;
+            }
+            else
+            {
+                page = 1;
+            }
+            ViewBag.CurrentFilter1 = JobFind;
+
+            var jobs = from n in db.Orders
+                           select n;
+            if (JobFind != "")
+                jobs = jobs.Where(n => n.Job.NameJob.StartsWith(JobFind));
+            return View(jobs.ToList().ToPagedList(page ?? 1, 20));
         }
 
         protected override void Dispose(bool disposing)

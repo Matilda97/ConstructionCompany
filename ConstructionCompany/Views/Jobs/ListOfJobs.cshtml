@@ -1,0 +1,78 @@
+﻿@model PagedList.IPagedList<ConstructionCompany.Models.Order>
+
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "ListOfJobs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>List of job performed</h2>
+
+@using (Html.BeginForm("ListOfJobs", "Jobs", FormMethod.Get))
+{
+    <fieldset>
+        Name job: @Html.TextBox("JobFind", ViewBag.CurrentFilter1 as string)
+    </fieldset>
+    <br>
+    <fieldset>
+        Price job: @Html.TextBox("PriceFind", ViewBag.CurrentFilter2 as string)
+    </fieldset>
+    <br>
+    <fieldset>
+        Customer: @Html.TextBox("CustomerFind", ViewBag.CurrentFilter3 as string)
+    </fieldset>
+    <br>
+    <fieldset>
+        Date end: <input name="DateFind" type="date" value="ViewBag.CurrentFilter4">
+    </fieldset>
+    <br>
+    <input type="submit" value="to find" />
+}
+<table class="table">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.First().Job.NameJob)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Job.Material.NameMaterial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Job.DescriptionJob)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Job.PriceJob)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().DateEnd)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Customer)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job.NameJob)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job.Material.NameMaterial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job.DescriptionJob)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job.PriceJob)
+            </td>
+            <th style="font-weight:100">
+                @Html.DisplayFor(modelItem => item.DateEnd)
+            </th>
+            <th style="font-weight:100">
+                @Html.DisplayFor(modelItem => item.Customer.FullName)
+            </th>
+        </tr>
+    }
+    @Html.PagedListPager(Model, page => Url.Action("ListOfJobs", new { page, filter = ViewBag.CurrentFilter }))
+</table>

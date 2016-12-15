@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ConstructionCompany.Models;
+using PagedList;
+using PagedList.Mvc;
 
 namespace ConstructionCompany.Controllers
 {
@@ -15,12 +17,35 @@ namespace ConstructionCompany.Controllers
         private ConstructionCompanyContext db = new ConstructionCompanyContext();
 
         // GET: Customers
-        public ActionResult Index()
+        [Authorize]
+        public ActionResult Index(int? page, string filter, string CustomerFind = "")
         {
-            return View(db.Customers.ToList());
+            if (CustomerFind == "")
+            {
+                CustomerFind = filter;
+            }
+            else
+            {
+                page = 1;
+            }
+            ViewBag.CurrentFilter = CustomerFind;
+            if (CustomerFind != null)
+            {
+                var customers = from n in db.Customers
+                               where n.FullName.StartsWith(CustomerFind)
+                               select n;
+                return View(customers.ToList().ToPagedList(page ?? 1, 20));
+            }
+            else
+            {
+                var customers = from n in db.Customers
+                               select n;
+                return View(customers.ToList().ToPagedList(page ?? 1, 20));
+            }
         }
 
         // GET: Customers/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -36,17 +61,17 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Customers/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: Customers/Create
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CustomerID,FullName,Address,Telephone,PassportData")] Customer customer)
+        public ActionResult Create([Bind(Include = "CustomerID,FullName,AddressCustomer,Telephone,PassportData")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -59,6 +84,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Customers/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -74,11 +100,10 @@ namespace ConstructionCompany.Controllers
         }
 
         // POST: Customers/Edit/5
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CustomerID,FullName,Address,Telephone,PassportData")] Customer customer)
+        public ActionResult Edit([Bind(Include = "CustomerID,FullName,AddressCustomer,Telephone,PassportData")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -90,6 +115,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Customers/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -105,6 +131,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // POST: Customers/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

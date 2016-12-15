@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -12,7 +13,10 @@ namespace ConstructionCompany.Models
         public int JobID { get; set; }
         public int BrigadeID { get; set; }
         public int PriceOrder { get; set; }
-        public System.DateTime DataStartAndEnd { get; set; }
+        [DataType(DataType.Date)]
+        public System.DateTime DateStart { get; set; }
+        [DataType(DataType.Date)]
+        public System.DateTime DateEnd { get; set; }
         public bool Completion { get; set; }
         public bool Payment { get; set; }
         public string Senior { get; set; }

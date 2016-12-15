@@ -14,16 +14,22 @@ namespace ConstructionCompany
     {
         protected void Application_Start()
         {
+            Database.SetInitializer(new Roles());
+
             //Инициализация БД путем выполнения кода в классе инициализатора с использование методов EF
             Database.SetInitializer(new ConstructionCompanyDbInitializer());
 
             //Инициализация БД путем запуска SQL инструкции из файла FillDB.sql
-            //Database.SetInitializer(new ConstructionCompanyDbInitializer());
-
-            using (var db = new ConstructionCompanyContext())
+            /*Database.SetInitializer(new ConstructionCompanyDbInitializer());
+            try
             {
-                db.Database.Initialize(true);
+                using (var db = new ConstructionCompanyContext())
+                {
+                    db.Database.Initialize(true);
+                }
             }
+            catch { }
+            */
             //Database.SetInitializer<ConstructionCompanyContext>(new DropCreateDatabaseAlways<ConstructionCompanyContext>());
             //ConstructionCompanyContext A = new ConstructionCompanyContext();
             //A.Database.Initialize(true);

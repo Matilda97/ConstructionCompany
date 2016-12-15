@@ -7,12 +7,12 @@ using System.Web;
 
 namespace ConstructionCompany.Models
 {
-    public class ConstructionCompanyDbInitializer: DropCreateDatabaseAlways<ConstructionCompanyContext>
+    public class ConstructionCompanyDbInitializer: CreateDatabaseIfNotExists<ConstructionCompanyContext>
     {
         protected override void Seed(ConstructionCompanyContext db)
         {
             //задание пути к файлу с текстом T-SQL инструкции
-            string readPath = HttpContext.Current.Server.MapPath("~") + "/Scripts/FuelBase/FillDB.sql";
+            string readPath = HttpContext.Current.Server.MapPath("~") + "/Scripts/ConstructionCompany.sql";
 
             //считывание текста SQL инструкции из внешнего текстового файла
             string SQLstring = "";

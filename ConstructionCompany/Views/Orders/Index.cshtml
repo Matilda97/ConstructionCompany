@@ -1,40 +1,62 @@
-﻿@model IEnumerable<ConstructionCompany.Models.Order>
+﻿@model PagedList.IPagedList<ConstructionCompany.Models.Order>
 
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div style="position: absolute; left: 0.1%; width: auto">
+<h2>Orders</h2>
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+@using (Html.BeginForm("Index", "Orders", FormMethod.Get))
+{
+    <fieldset>
+        Senior: @Html.TextBox("SeniorOrderFind", ViewBag.CurrentFilter1 as string)
+    </fieldset>
+    <br>
+    <fieldset>
+        NameMaterial: @Html.TextBox("MaterialFind", ViewBag.CurrentFilter2 as string)
+    </fieldset>
+    <br>
+    <input type="submit" value="to find" />
+}
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Brigade.NameBrigade)
+            @Html.DisplayNameFor(model => model.First().Brigade.NameBrigade)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Customer.FullName)
+            @Html.DisplayNameFor(model => model.First().Customer.FullName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Job.NameJob)
+            @Html.DisplayNameFor(model => model.First().Job.NameJob)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PriceOrder)
+            @Html.DisplayNameFor(model => model.First().Job.Material.NameMaterial)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DataStartAndEnd)
+            @Html.DisplayNameFor(model => model.First().PriceOrder)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Completion)
+            @Html.DisplayNameFor(model => model.First().DateStart)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Payment)
+            @Html.DisplayNameFor(model => model.First().DateEnd)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Senior)
+            @Html.DisplayNameFor(model => model.First().Completion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Payment)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Senior)
         </th>
         <th></th>
     </tr>
@@ -51,10 +73,16 @@
             @Html.DisplayFor(modelItem => item.Job.NameJob)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.Job.Material.NameMaterial)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.PriceOrder)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.DataStartAndEnd)
+            @Html.DisplayFor(modelItem => item.DateStart)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateEnd)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Completion)
@@ -66,11 +94,20 @@
             @Html.DisplayFor(modelItem => item.Senior)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.OrderID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.OrderID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.OrderID })
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = item.OrderID })
+            }
+            @Html.Display("&nbsp;") |
+            @Html.ActionLink("Details", "Details", new { id = item.OrderID }) |
+
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = item.OrderID })
+            }
         </td>
     </tr>
 }
-
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = ViewBag.CurrentFilter }))
 </table>
+    </div>

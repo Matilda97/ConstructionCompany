@@ -1,25 +1,43 @@
-﻿@model IEnumerable<ConstructionCompany.Models.Brigade>
+﻿@model PagedList.IPagedList<ConstructionCompany.Models.Brigade>
 
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Brigades</h2>
 
+@Html.ActionLink("Brigade's jobs", "Brigade_sJobs")
+
+@if (User.IsInRole("admin"))
+{
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+}
+@using (Html.BeginForm("Index", "Brigades", FormMethod.Get))
+{
+    <fieldset>
+        Name brigade: @Html.TextBox("BrigadeFind", ViewBag.CurrentFilter1 as string)
+    </fieldset>
+    <br>
+    <fieldset>
+        Name brigadier: @Html.TextBox("BrigadierFind", ViewBag.CurrentFilter2 as string)
+    </fieldset>
+    <br>
+    <input type="submit" value="to find" />
+}
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.NameBrigade)
+            @Html.DisplayNameFor(model => model.First().NameBrigade)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Brigadier)
+            @Html.DisplayNameFor(model => model.First().Brigadier)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Composition)
+            @Html.DisplayNameFor(model => model.First().Composition)
         </th>
         <th></th>
     </tr>
@@ -36,11 +54,19 @@
             @Html.DisplayFor(modelItem => item.Composition)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.BrigadeID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.BrigadeID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.BrigadeID })
+        @if (User.IsInRole("admin"))
+        {
+            @Html.ActionLink("Edit", "Edit", new { id = item.BrigadeID })
+        }
+        @Html.Display("&nbsp;") |
+        @Html.ActionLink("Details", "Details", new { id = item.BrigadeID }) |
+
+        @if (User.IsInRole("admin"))
+        {
+            @Html.ActionLink("Delete", "Delete", new { id = item.BrigadeID })
+        }
         </td>
     </tr>
 }
-
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = ViewBag.CurrentFilter }))
 </table>

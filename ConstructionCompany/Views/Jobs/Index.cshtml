@@ -1,28 +1,42 @@
-﻿@model IEnumerable<ConstructionCompany.Models.Job>
+﻿@model PagedList.IPagedList<ConstructionCompany.Models.Job>
 
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Jobs</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@Html.ActionLink("Show list of jobs", "ListOfJobs")
+
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+@using (Html.BeginForm("Index", "Jobs", FormMethod.Get))
+{
+    <fieldset>
+        NameJob: @Html.TextBox("JobFind", ViewBag.CurrentFilter as string)
+        <input type="submit" value="to find" />
+    </fieldset>
+}
 <table class="table">
     <tr>
+        
         <th>
-            @Html.DisplayNameFor(model => model.Material.NameMaterial)
+            @Html.DisplayNameFor(model => model.First().NameJob)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.NameJob)
+            @Html.DisplayNameFor(model => model.First().Material.NameMaterial)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DescriptionJob)
+            @Html.DisplayNameFor(model => model.First().DescriptionJob)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PriceJob)
+            @Html.DisplayNameFor(model => model.First().PriceJob)
         </th>
         <th></th>
     </tr>
@@ -30,10 +44,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Material.NameMaterial)
+            @Html.DisplayFor(modelItem => item.NameJob)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.NameJob)
+            @Html.DisplayFor(modelItem => item.Material.NameMaterial)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DescriptionJob)
@@ -42,11 +56,19 @@
             @Html.DisplayFor(modelItem => item.PriceJob)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.JobID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.JobID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.JobID })
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = item.JobID })
+            }
+            @Html.Display("&nbsp;") |
+            @Html.ActionLink("Details", "Details", new { id = item.JobID }) |
+
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = item.JobID })
+            }
         </td>
     </tr>
 }
-
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = ViewBag.CurrentFilter }))
 </table>

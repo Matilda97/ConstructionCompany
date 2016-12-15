@@ -1,28 +1,39 @@
-﻿@model IEnumerable<ConstructionCompany.Models.Customer>
+﻿@model PagedList.IPagedList<ConstructionCompany.Models.Customer>
 
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Customers</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+@using (Html.BeginForm("Index", "Customers", FormMethod.Get))
+{
+    <fieldset>
+        FullName: @Html.TextBox("CustomerFind", ViewBag.CurrentFilter as string)
+        <input type="submit" value="to find" />
+    </fieldset>
+}
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FullName)
+            @Html.DisplayNameFor(model => model.First().FullName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Address)
+            @Html.DisplayNameFor(model => model.First().AddressCustomer)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Telephone)
+            @Html.DisplayNameFor(model => model.First().Telephone)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PassportData)
+            @Html.DisplayNameFor(model => model.First().PassportData)
         </th>
         <th></th>
     </tr>
@@ -33,7 +44,7 @@
             @Html.DisplayFor(modelItem => item.FullName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Address)
+            @Html.DisplayFor(modelItem => item.AddressCustomer)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Telephone)
@@ -42,11 +53,19 @@
             @Html.DisplayFor(modelItem => item.PassportData)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CustomerID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CustomerID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CustomerID })
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = item.CustomerID })
+            }
+            @Html.Display("&nbsp;") |
+            @Html.ActionLink("Details", "Details", new { id = item.CustomerID }) |
+
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = item.CustomerID })
+            }
         </td>
     </tr>
 }
-
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = ViewBag.CurrentFilter }))
 </table>

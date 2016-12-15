@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ConstructionCompany.Models;
+using PagedList;
+using PagedList.Mvc;
 
 namespace ConstructionCompany.Controllers
 {
@@ -15,13 +17,33 @@ namespace ConstructionCompany.Controllers
         private ConstructionCompanyContext db = new ConstructionCompanyContext();
 
         // GET: Orders
-        public ActionResult Index()
+        [Authorize]
+        public ActionResult Index(int? page, string filter1 = "", string SeniorOrderFind = "", string filter2 = "", string MaterialFind = "")
         {
-            var orders = db.Orders.Include(o => o.Brigade).Include(o => o.Customer).Include(o => o.Job);
-            return View(orders.ToList());
+            if (SeniorOrderFind == "" && MaterialFind == "")
+            {
+                SeniorOrderFind = filter1;
+                MaterialFind = filter2;
+            }
+            else
+            {
+                page = 1;
+            }
+            ViewBag.CurrentFilter1 = SeniorOrderFind;
+            ViewBag.CurrentFilter2 = MaterialFind;
+
+            var orders = from n in db.Orders.Include(o => o.Brigade).Include(o => o.Customer).Include(o => o.Job)
+                     select n;
+            if (SeniorOrderFind != "")
+                orders = orders.Include(o => o.Brigade).Include(o => o.Customer).Include(o => o.Job).Where(n => n.Senior.StartsWith(SeniorOrderFind));
+            if (MaterialFind != "")
+                orders = orders.Include(o => o.Brigade).Include(o => o.Customer).Include(o => o.Job).Where(n => n.Job.Material.NameMaterial.StartsWith(MaterialFind));
+            return View(orders.ToList().ToPagedList(page ?? 1, 20));
+
         }
 
         // GET: Orders/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -37,6 +59,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Orders/Create
+        [Authorize]
         public ActionResult Create()
         {
             ViewBag.BrigadeID = new SelectList(db.Brigades, "BrigadeID", "NameBrigade");
@@ -46,8 +69,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // POST: Orders/Create
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "OrderID,CustomerID,JobID,BrigadeID,PriceOrder,DataStartAndEnd,Completion,Payment,Senior")] Order order)
@@ -66,6 +88,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Orders/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -84,8 +107,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // POST: Orders/Edit/5
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "OrderID,CustomerID,JobID,BrigadeID,PriceOrder,DataStartAndEnd,Completion,Payment,Senior")] Order order)
@@ -103,6 +125,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // GET: Orders/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -118,6 +141,7 @@ namespace ConstructionCompany.Controllers
         }
 
         // POST: Orders/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

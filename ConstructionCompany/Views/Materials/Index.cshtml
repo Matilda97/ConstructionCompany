@@ -1,28 +1,39 @@
-﻿@model IEnumerable<ConstructionCompany.Models.Material>
+﻿@model PagedList.IPagedList<ConstructionCompany.Models.Material>
 
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Materials</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+@using (Html.BeginForm("Index", "Materials", FormMethod.Get))
+{
+    <fieldset>
+        NameMaterial: @Html.TextBox("MaterialFind", ViewBag.CurrentFilter as string)
+        <input type="submit" value="to find" />
+    </fieldset>
+}
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.NameMaterial)
+            @Html.DisplayNameFor(model => model.First().NameMaterial)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Packaging)
+            @Html.DisplayNameFor(model => model.First().Packaging)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DescriptionMaterial)
+            @Html.DisplayNameFor(model => model.First().DescriptionMaterial)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PriceMaterial)
+            @Html.DisplayNameFor(model => model.First().PriceMaterial)
         </th>
         <th></th>
     </tr>
@@ -42,11 +53,19 @@
             @Html.DisplayFor(modelItem => item.PriceMaterial)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.MaterialID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.MaterialID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.MaterialID })
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = item.MaterialID })
+            }
+            @Html.Display("&nbsp;") |
+            @Html.ActionLink("Details", "Details", new { id = item.MaterialID }) |
+
+            @if (User.IsInRole("admin"))
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = item.MaterialID })
+            }
         </td>
     </tr>
 }
-
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, filter = ViewBag.CurrentFilter }))
 </table>
